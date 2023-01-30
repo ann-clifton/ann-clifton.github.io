@@ -6,7 +6,7 @@
   {%- if page.redirect -%}
     <meta http-equiv="refresh" content="3; url={{ site.baseurl }}/" />
   {%- endif -%}
-  {% include head.html %}
+    {% include head.html %}
   </head>
 
   <!-- Body -->
@@ -17,6 +17,7 @@
 
     <!-- Content -->
     <div class="container mt-5">
+      <!-- <img src="{% link /assets/img/banner.png %}" style="max-width:100%; height:auto"/> -->
       {{ content }}
     </div>
 
