@@ -78,43 +78,72 @@
 - title: Funding
   type: time_table
   contents:
-    - year: 2023
+    - year: 2024
+    - title: Applied eXploration In Open Mathematics Lab (AXIOM Lab), Co-PI
+      institution: Louisiana Board of Regents Support Fund
+
+      description: Targeted Enhancement Grant
       items:
-        - AMS Mathematics Research Communities, "Trees in Many Contexts"
-        - Follow-up research collaboration funding
+        - $60,875 (Under Review)
+    - title: AWM Workshop and Poster Session at the JMM 2025
+      institution: Association for Women in Mathematics, NSF-DMS Grant 2113506
+
+      description: Travel funding for the Joint Mathematics Meetings to attend the AWM Workshop and present a poster titled "Network Resources-Towards a characterization of balanced vertex partitioned graphs"
+      items:
+        - $2,000   
+    - title: Engineering Unleashed Faculty Development Workshop
+
+      description: EML and Student Research Workshop funded participant. Year-long program that begins with a week of professional development and culminates with an implemented project and publication.
+    - title: COES RED Travel Grant
+      institution: Louisiana Tech University
+
+      description: Support to attend, present "A Graph Partitioning Problem," and chair a session at SIAM National Conference and Conference on Discrete Mathematics
+      items:
+        - $1,000
+    - year: 2023
+    - title: AMS Mathematics Research Communities, "Trees in Many Contexts"
+      institution: American Mathematical Society
+      description: Follow-up research collaboration funding
+      items:
         - $3200
     - year: 2022
+    - title: Joint Mathematics Meetings Travel Funding
+      institution: American Mathematical Society
+      description: Travel funding to attend and organize a special session at the JMM
       items:
-        - Joint Mathematics Meetings, American Mathematical Society
         - $1300
-        - COES RED Travel Grant, Louisiana Tech University
+    - title: COES RED Travel Grant
+      institution: Louisiana Tech University
+      description: Travel support to attend the Joint Mathematics Meetings
+      items:
         - $600
     - year: 2019
+    - title: Faculty Development Award
+      institution: Cedar Crest College
+      description: Travel support to attend the Joint Mathematics Meetings
       items:
-        - Faculty Development Award, Cedar Crest College
         - $1380
     - year: 2018
+    - title: Innovative Pedagogy Grant
+      institution: University of South Carolina
+      description: Funding to implement a flipped calculus classroom
       items:
-        - Innovative Pedagogy Grant, University of South Carolina
         - $2,070
 
 - title: Academic Interests
   type: nested_list
   contents:
-    - title: Equitable Dissections of Graphs
+    - title: Graph Theory
       items: 
-        - Graph theory
-    - title: Tanglegram Reconstruction
+        - Graph colorings, reconstruction, and partitioning
+    - title: Artificial Intelligence
       items:
-        - Graph theory
-    - title: Knowledge Representation and Reasoning
+        - Knowledge engineering, applications of graph theory to data analysis, knowledge graphs
+    - title: Mathematics Education
       items:
-        - Artificial Intelligence
-    - title: Effects of Standards Based Grading in Introductory Mathematics
-      items:
-        - Mathematics Education
+        - Effects of standards based grading in first year courses, developing course based undergraduate research opportunities, impact of reflection journals on students' confidence
 
 - title: Other Interests
   type: list
   contents:
-    - <u>Hobbies:</u> Fishing, hiking, and generally being outdoors with my husband and our dog, Emmy
+    - Fishing, hiking, and generally being outdoors with my husband and our dog, Emmy
