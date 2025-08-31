@@ -11,7 +11,7 @@
   contents:
     - title: Doctor of Philosophy, Computational Analysis and Modeling
       institution: Louisiana Tech University, Ruston, LA
-      year: Expected 2025
+      year: 2025
       description:
         - "Advisor: Galen Turner"
     - title: Master of Science, Mathematics
@@ -34,9 +34,13 @@
 - title: Experience
   type: time_table
   contents:
+    - title: Assistant Professor
+      institution: Louisiana Tech University, Ruston, LA
+      year: 2025 - Present
+      
     - title: Instructor
       institution: Louisiana Tech University, Ruston, LA
-      year: 2020 - Present
+      year: 2020 - 2025
 
     - title: Visiting Assistant Professor
       institution: Cedar Crest College, Allentown, PA
@@ -84,7 +88,7 @@
 
       description: Targeted Enhancement Grant
       items:
-        - $60,875 (Under Review)
+        - $60,875
     - title: AWM Workshop and Poster Session at the JMM 2025
       institution: Association for Women in Mathematics, NSF-DMS Grant 2113506
 
@@ -135,15 +139,11 @@
   contents:
     - title: Graph Theory
       items: 
-        - Graph colorings, reconstruction, and partitioning
-    - title: Artificial Intelligence
+        - Graph colorings, reconstruction, and vertex partitioning
+    - title: Theoretical Computer Science
       items:
-        - Knowledge engineering, applications of graph theory to data analysis, knowledge graphs
+        - Knowledge engineering, knowledge graphs, complexity theory
     - title: Mathematics Education
       items:
-        - Effects of standards based grading in first year courses, developing course based undergraduate research opportunities, impact of reflection journals on students' confidence
+        - Alternative grading schemes, fostering cross-disciplinary connections, sense of belonging and community in informal learning environments
 
-- title: Other Interests
-  type: list
-  contents:
-    - Fishing, hiking, and generally being outdoors with my husband and our dog, Emmy.
