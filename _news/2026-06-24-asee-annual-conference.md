@@ -1,11 +1,11 @@
 ---
 layout: post
 title: ASEE Annual Conference
-date: 2025-06-24 12:00:00-0500
+date: 2026-06-24 12:00:00-0500
 inline: false
 ---
 
-Really enjoyed my first American Society for Engineering Education Annual Conference! (June 21&ndash;24, 2025)
+Really enjoyed my first American Society for Engineering Education Annual Conference! (June 21&ndash;24, 2026)
 
 It was great to reconnect with KEEN EUFD EERS participants and share my experiences on a panel in addition to presenting a work in progress paper, coauthored with Blake Farman, Ph.D., in the Math Division ([read the paper](https://lnkd.in/ejWVM74K)).
 
