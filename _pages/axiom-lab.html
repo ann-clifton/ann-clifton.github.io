@@ -1,0 +1,275 @@
+---
+layout: page
+permalink: /axiom-lab/
+title: AXIOM Lab
+description: Reserve the AXIOM Lab or check when it is available. Open 8:00 AM – 7:00 PM, Monday through Friday.
+nav: true
+nav_order: 4
+---
+
+<style>
+  .axiom {
+    --tech-blue: #003087;
+    --tech-red: #CB333B;
+    --tech-blue-light: #C6DAE7;
+    --tech-gray: #8C8279;
+    --tech-gray-light: #CBC4BC;
+    font-size: 0.95rem;
+  }
+  .axiom * { box-sizing: border-box; }
+  .axiom .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  @media (max-width: 700px) { .axiom .grid { grid-template-columns: 1fr; } }
+
+  .axiom h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--tech-blue);
+    border-bottom: 3px solid var(--tech-blue);
+    padding-bottom: 0.3rem;
+    margin: 0 0 1rem 0;
+  }
+  html[data-theme="dark"] .axiom h2 { color: #758CC0; border-color: #758CC0; }
+
+  .axiom label { display: block; font-weight: 600; margin: 0.75rem 0 0.25rem; }
+  .axiom input, .axiom select, .axiom textarea {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--tech-gray-light);
+    border-radius: 4px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+    font: inherit;
+  }
+  .axiom input:focus, .axiom select:focus, .axiom textarea:focus {
+    outline: 2px solid var(--tech-blue); outline-offset: 1px; border-color: var(--tech-blue);
+  }
+  .axiom .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  .axiom button {
+    margin-top: 1rem;
+    padding: 0.55rem 1.2rem;
+    background: var(--tech-blue);
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .axiom button:hover { background: #0A3254; }
+  .axiom button:disabled { background: var(--tech-gray); cursor: wait; }
+
+  .axiom .msg { margin-top: 0.75rem; padding: 0.6rem 0.8rem; border-radius: 4px; display: none; }
+  .axiom .msg.ok    { display: block; background: rgba(0,48,135,0.10); border-left: 4px solid var(--tech-blue); }
+  .axiom .msg.error { display: block; background: rgba(203,51,59,0.10); border-left: 4px solid var(--tech-red); }
+
+  .axiom .slots { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+  .axiom .slots li {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    border-left: 4px solid var(--tech-blue-light);
+    background: rgba(198,218,231,0.25);
+    margin-bottom: 4px;
+    border-radius: 0 4px 4px 0;
+  }
+  .axiom .slots li.reserved { border-left-color: var(--tech-red); background: rgba(203,51,59,0.08); }
+  .axiom .slots .time { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .axiom .slots .who { text-align: right; }
+  .axiom .slots .status { font-weight: 700; }
+  .axiom .slots li .status { color: var(--tech-blue); }
+  .axiom .slots li.reserved .status { color: var(--tech-red); }
+  html[data-theme="dark"] .axiom .slots li .status { color: #758CC0; }
+  .axiom .slots .who small { color: var(--global-text-color-light); }
+
+  .axiom .closed, .axiom .loading { margin-top: 0.75rem; color: var(--global-text-color-light); font-style: italic; }
+  .axiom .hours { color: var(--global-text-color-light); margin-bottom: 1.25rem; }
+  .axiom .setup {
+    margin-bottom: 1.25rem; padding: 0.6rem 0.8rem; border-radius: 4px;
+    background: rgba(203,51,59,0.10); border-left: 4px solid var(--tech-red); display: none;
+  }
+</style>
+
+<div class="axiom">
+  <p class="hours">Hours: <strong>8:00 AM – 7:00 PM</strong>, Monday – Friday. Reservations are in one-hour blocks.</p>
+  <div class="setup" id="axiom-setup">
+    <strong>Setup not finished:</strong> no reservation backend is configured, so bookings made here are saved only in this browser.
+  </div>
+
+  <div class="grid">
+
+    <section>
+      <h2>Check availability</h2>
+      <label for="check-date">Date</label>
+      <input type="date" id="check-date">
+      <div id="check-result"></div>
+    </section>
+
+    <section>
+      <h2>Reserve the room</h2>
+      <form id="reserve-form" autocomplete="off">
+        <label for="r-name">Your name</label>
+        <input type="text" id="r-name" required maxlength="80">
+
+        <label for="r-purpose">Purpose</label>
+        <input type="text" id="r-purpose" required maxlength="160" placeholder="e.g. Research meeting, study group, office hours">
+
+        <label for="r-date">Date</label>
+        <input type="date" id="r-date" required>
+
+        <div class="row">
+          <div>
+            <label for="r-start">Start</label>
+            <select id="r-start" required></select>
+          </div>
+          <div>
+            <label for="r-end">End</label>
+            <select id="r-end" required></select>
+          </div>
+        </div>
+
+        <button type="submit" id="r-submit">Reserve</button>
+        <div class="msg" id="r-msg" role="status"></div>
+      </form>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- Configuration ------------------------------------------------------
+  // Paste the Google Apps Script "Web app" URL here after deploying it
+  // (see _axiom_lab/SETUP.md in the site repo). Leave empty to run in
+  // browser-only demo mode.
+  var API_URL = "https://script.google.com/macros/s/AKfycbzCiwhxJmILs_tgqcqvYaPhbWvBHo3u5ySAJeyuYaksExpl1KZVCpj1DwvfugqvYEDn/exec";
+  var OPEN_HOUR = 8;    // 8:00 AM
+  var CLOSE_HOUR = 19;  // 7:00 PM
+  // -------------------------------------------------------------------------
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function fmtHour(h) {
+    var suffix = h < 12 ? "AM" : "PM";
+    var h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ":00 " + suffix;
+  }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function isoDate(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function parseDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function isWeekday(s) { var d = parseDate(s).getDay(); return d >= 1 && d <= 5; }
+  function nextWeekday(d) { d = new Date(d); while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1); return d; }
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  // ---- Storage: Apps Script backend, or localStorage in demo mode --------
+  var demo = !API_URL;
+  if (demo) $("axiom-setup").style.display = "block";
+
+  function demoAll() { try { return JSON.parse(localStorage.getItem("axiom-lab") || "[]"); } catch (e) { return []; } }
+
+  function fetchDay(date) {
+    if (demo) {
+      return Promise.resolve(demoAll().filter(function (r) { return r.date === date; }));
+    }
+    return fetch(API_URL + "?date=" + encodeURIComponent(date), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || "Could not load reservations."); return j.reservations; });
+  }
+
+  function saveReservation(res) {
+    if (demo) {
+      var all = demoAll();
+      if (all.some(function (r) { return r.date === res.date && r.start < res.end && res.start < r.end; })) {
+        return Promise.reject(new Error("That time is already reserved."));
+      }
+      all.push(res);
+      localStorage.setItem("axiom-lab", JSON.stringify(all));
+      return Promise.resolve();
+    }
+    // text/plain avoids a CORS preflight, which Apps Script cannot answer.
+    return fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(res) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || "Reservation failed."); });
+  }
+
+  // ---- Availability panel -------------------------------------------------
+  function renderDay(date) {
+    var out = $("check-result");
+    if (!date) { out.innerHTML = ""; return; }
+    if (!isWeekday(date)) {
+      out.innerHTML = '<p class="closed">The AXIOM Lab is closed on weekends.</p>';
+      return;
+    }
+    out.innerHTML = '<p class="loading">Loading…</p>';
+    fetchDay(date).then(function (list) {
+      var html = '<ul class="slots">';
+      for (var h = OPEN_HOUR; h < CLOSE_HOUR; h++) {
+        var r = null;
+        for (var i = 0; i < list.length; i++) if (list[i].start <= h && h < list[i].end) { r = list[i]; break; }
+        html += '<li class="' + (r ? "reserved" : "available") + '">'
+              + '<span class="time">' + fmtHour(h) + " – " + fmtHour(h + 1) + "</span>"
+              + (r
+                  ? '<span class="who"><span class="status">Reserved</span><br><small>' + escapeHtml(r.name) + " · " + escapeHtml(r.purpose) + "</small></span>"
+                  : '<span class="status">Available</span>')
+              + "</li>";
+      }
+      out.innerHTML = html + "</ul>";
+    }).catch(function (e) {
+      out.innerHTML = '<p class="msg error" style="display:block">' + escapeHtml(e.message) + "</p>";
+    });
+  }
+
+  // ---- Reservation form ---------------------------------------------------
+  function fillTimes() {
+    var s = $("r-start"), e = $("r-end");
+    for (var h = OPEN_HOUR; h < CLOSE_HOUR; h++) s.add(new Option(fmtHour(h), h));
+    for (var k = OPEN_HOUR + 1; k <= CLOSE_HOUR; k++) e.add(new Option(fmtHour(k), k));
+    e.value = OPEN_HOUR + 1;
+    s.addEventListener("change", function () { if (+e.value <= +s.value) e.value = +s.value + 1; });
+  }
+
+  function showMsg(text, cls) { var m = $("r-msg"); m.textContent = text; m.className = "msg " + cls; }
+
+  $("reserve-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var res = {
+      name: $("r-name").value.trim(),
+      purpose: $("r-purpose").value.trim(),
+      date: $("r-date").value,
+      start: +$("r-start").value,
+      end: +$("r-end").value
+    };
+    if (!res.name || !res.purpose || !res.date) return showMsg("Please fill in every field.", "error");
+    if (!isWeekday(res.date)) return showMsg("The lab is closed on weekends. Please pick a Monday–Friday date.", "error");
+    if (res.end <= res.start) return showMsg("End time must be after start time.", "error");
+
+    var btn = $("r-submit");
+    btn.disabled = true; showMsg("Saving…", "ok");
+    fetchDay(res.date).then(function (list) {
+      var clash = list.filter(function (r) { return r.start < res.end && res.start < r.end; });
+      if (clash.length) throw new Error("That time overlaps an existing reservation (" + fmtHour(clash[0].start) + " – " + fmtHour(clash[0].end) + ", " + clash[0].name + ").");
+      return saveReservation(res);
+    }).then(function () {
+      showMsg("Reserved: " + parseDate(res.date).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }) + ", " + fmtHour(res.start) + " – " + fmtHour(res.end) + ".", "ok");
+      $("r-purpose").value = "";
+      $("check-date").value = res.date;
+      renderDay(res.date);
+    }).catch(function (e) {
+      showMsg(e.message, "error");
+    }).then(function () { btn.disabled = false; });
+  });
+
+  // ---- Init ---------------------------------------------------------------
+  var today = isoDate(new Date());
+  var first = isoDate(nextWeekday(new Date()));
+  $("check-date").value = first;
+  $("r-date").value = first;
+  $("r-date").min = today;
+  $("check-date").addEventListener("change", function () { renderDay(this.value); });
+  fillTimes();
+  renderDay(first);
+})();
+</script>
