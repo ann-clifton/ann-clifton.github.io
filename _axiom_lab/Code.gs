@@ -5,6 +5,7 @@
  * Deployed as a Web app, it answers:
  *   GET  ?date=YYYY-MM-DD   -> {ok:true, reservations:[{name,purpose,date,start,end}]}
  *   POST {name,purpose,date,start,end} (JSON body) -> {ok:true} or {ok:false, error}
+ * start/end are decimal hours on a quarter-hour grid (9.25 = 9:15 AM, 13.5 = 1:30 PM).
  *
  * See SETUP.md for the (one-time, ~5 minute) deployment steps.
  */
@@ -70,8 +71,8 @@ function doPost(e) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json_({ ok: false, error: 'Invalid date.' });
   var p = date.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
   if (d.getDay() === 0 || d.getDay() === 6) return json_({ ok: false, error: 'The lab is closed on weekends.' });
-  if (!(start >= OPEN_HOUR && end <= CLOSE_HOUR && start < end && start % 1 === 0 && end % 1 === 0)) {
-    return json_({ ok: false, error: 'Reservations must fall between 8:00 AM and 7:00 PM.' });
+  if (!(start >= OPEN_HOUR && end <= CLOSE_HOUR && start < end && (start * 4) % 1 === 0 && (end * 4) % 1 === 0)) {
+    return json_({ ok: false, error: 'Reservations must fall between 8:00 AM and 7:00 PM, in 15-minute steps.' });
   }
 
   // Lock so two people cannot book the same slot at the same instant.

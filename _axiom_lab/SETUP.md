@@ -18,6 +18,8 @@ ann.w.clifton@gmail.com.
 ## Managing reservations
 
 - **Cancel or edit** a booking: delete or change its row in the sheet.
+  Start and End are decimal hours on a 15-minute grid: 9 = 9:00 AM,
+  9.25 = 9:15, 9.5 = 9:30, 9.75 = 9:45, 13 = 1:00 PM, 18.75 = 6:45 PM.
 - **Change hours**: edit `OPEN_HOUR` / `CLOSE_HOUR` in both `Code.gs` and
   `_pages/axiom-lab.html` (7 PM is 19). Paste the new `Code.gs` into the
   Apps Script editor, save, then **Deploy → Manage deployments → Edit
