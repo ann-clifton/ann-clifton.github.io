@@ -17,7 +17,12 @@ ann.w.clifton@gmail.com.
 
 ## Managing reservations
 
-- **Cancel or edit** a booking: delete or change its row in the sheet.
+- **Self-service cancellation**: every booking gets a 6-character code
+  (column G, shown to the booker on the confirmation). Entering it in the
+  "Cancel a reservation" box on the page deletes that row. To change a
+  time, people cancel and rebook.
+- **Cancel or edit** a booking yourself: delete or change its row in the
+  sheet (needed if someone lost their code).
   Start and End are decimal hours on a 15-minute grid: 9 = 9:00 AM,
   9.25 = 9:15, 9.5 = 9:30, 9.75 = 9:45, 13 = 1:00 PM, 18.75 = 6:45 PM.
 - **Change hours**: edit `OPEN_HOUR` / `CLOSE_HOUR` in both `Code.gs` and

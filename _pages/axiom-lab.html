@@ -85,6 +85,13 @@ nav_order: 4
   html[data-theme="dark"] .axiom .slots li .status { color: #758CC0; }
   .axiom .slots .who small { color: var(--global-text-color-light); }
 
+  .axiom .code {
+    display: inline-block; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 1.15em; font-weight: 700;
+    letter-spacing: 0.12em; padding: 0.1em 0.45em; border-radius: 4px; background: var(--tech-blue); color: #fff;
+  }
+  .axiom .cancel { margin-top: 2rem; }
+  .axiom .cancel .row { grid-template-columns: 1fr auto; align-items: end; }
+  .axiom .cancel button { margin-top: 0; }
   .axiom .closed, .axiom .loading { margin-top: 0.75rem; color: var(--global-text-color-light); font-style: italic; }
   .axiom .hours { color: var(--global-text-color-light); margin-bottom: 1.25rem; }
   .axiom .setup {
@@ -108,7 +115,8 @@ nav_order: 4
       <div id="check-result"></div>
     </section>
 
-    <section>
+    <div>
+      <section>
       <h2>Reserve the room</h2>
       <form id="reserve-form" autocomplete="off">
         <label for="r-name">Your name</label>
@@ -134,7 +142,22 @@ nav_order: 4
         <button type="submit" id="r-submit">Reserve</button>
         <div class="msg" id="r-msg" role="status"></div>
       </form>
-    </section>
+      </section>
+
+      <section class="cancel">
+      <h2>Cancel a reservation</h2>
+      <form id="cancel-form" autocomplete="off">
+        <div class="row">
+          <div>
+            <label for="c-code">Cancellation code</label>
+            <input type="text" id="c-code" required maxlength="8" placeholder="e.g. K7Q2MX" style="text-transform: uppercase">
+          </div>
+          <button type="submit" id="c-submit">Cancel</button>
+        </div>
+        <div class="msg" id="c-msg" role="status"></div>
+      </form>
+      </section>
+    </div>
 
   </div>
 </div>
@@ -187,15 +210,32 @@ nav_order: 4
       if (all.some(function (r) { return r.date === res.date && r.start < res.end && res.start < r.end; })) {
         return Promise.reject(new Error("That time is already reserved."));
       }
+      res.code = "DEMO" + Math.floor(Math.random() * 90 + 10);
       all.push(res);
       localStorage.setItem("axiom-lab", JSON.stringify(all));
-      return Promise.resolve();
+      return Promise.resolve(res.code);
     }
-    // text/plain avoids a CORS preflight, which Apps Script cannot answer.
-    return fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(res) })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) throw new Error(j.error || "Reservation failed."); });
+    return post(res).then(function (j) { if (!j.ok) throw new Error(j.error || "Reservation failed."); return j.code; });
   }
+
+  function cancelReservation(code) {
+    if (demo) {
+      var all = demoAll(), hit = all.filter(function (r) { return r.code === code; })[0];
+      if (!hit) return Promise.reject(new Error("No reservation found with that code."));
+      localStorage.setItem("axiom-lab", JSON.stringify(all.filter(function (r) { return r.code !== code; })));
+      return Promise.resolve(hit);
+    }
+    return post({ action: "cancel", code: code }).then(function (j) { if (!j.ok) throw new Error(j.error || "Cancellation failed."); return j.reservation; });
+  }
+
+  // text/plain avoids a CORS preflight, which Apps Script cannot answer.
+  function post(body) {
+    return fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); });
+  }
+
+  function fmtDate(s) { return parseDate(s).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }); }
+  function fmtRange(r) { return fmtDate(r.date) + ", " + fmtHour(r.start) + " – " + fmtHour(r.end); }
 
   // ---- Availability panel -------------------------------------------------
   function renderDay(date) {
@@ -237,7 +277,7 @@ nav_order: 4
     s.addEventListener("change", function () { if (+e.value <= +s.value) e.value = Math.min(+s.value + 1, CLOSE_HOUR); });
   }
 
-  function showMsg(text, cls) { var m = $("r-msg"); m.textContent = text; m.className = "msg " + cls; }
+  function showMsg(text, cls, id) { var m = $(id || "r-msg"); m.textContent = text; m.className = "msg " + cls; }
 
   $("reserve-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
@@ -258,13 +298,31 @@ nav_order: 4
       var clash = list.filter(function (r) { return r.start < res.end && res.start < r.end; });
       if (clash.length) throw new Error("That time overlaps an existing reservation (" + fmtHour(clash[0].start) + " – " + fmtHour(clash[0].end) + ", " + clash[0].name + ").");
       return saveReservation(res);
-    }).then(function () {
-      showMsg("Reserved: " + parseDate(res.date).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }) + ", " + fmtHour(res.start) + " – " + fmtHour(res.end) + ".", "ok");
+    }).then(function (code) {
+      var m = $("r-msg");
+      m.innerHTML = "Reserved: " + escapeHtml(fmtRange(res)) + ".<br>Your cancellation code is <span class=\"code\">" + escapeHtml(code) + "</span> — save it in case you need to cancel.";
+      m.className = "msg ok";
       $("r-purpose").value = "";
       $("check-date").value = res.date;
       renderDay(res.date);
     }).catch(function (e) {
       showMsg(e.message, "error");
+    }).then(function () { btn.disabled = false; });
+  });
+
+  // ---- Cancellation form --------------------------------------------------
+  $("cancel-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var code = $("c-code").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (!code) return showMsg("Please enter your cancellation code.", "error", "c-msg");
+    var btn = $("c-submit");
+    btn.disabled = true; showMsg("Cancelling…", "ok", "c-msg");
+    cancelReservation(code).then(function (r) {
+      showMsg("Cancelled: " + fmtRange(r) + " (" + r.name + ").", "ok", "c-msg");
+      $("c-code").value = "";
+      if ($("check-date").value === r.date) renderDay(r.date);
+    }).catch(function (e) {
+      showMsg(e.message, "error", "c-msg");
     }).then(function () { btn.disabled = false; });
   });
 
