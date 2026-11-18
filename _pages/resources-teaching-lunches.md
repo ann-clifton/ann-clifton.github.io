@@ -6,7 +6,7 @@ description: Topics, discussion questions, and resources from the Teaching Lunch
 nav: false
 ---
 
-Teaching Lunches are lunchtime conversations about teaching for the Mathematics & Statistics faculty at Louisiana Tech. I organize them, and we meet in the [AXIOM Lab]({{ '/axiom-lab/' | relative_url }}) (Bogard 319). Each lunch has a topic and a couple of discussion questions. This page keeps the topics and the resources that came up, so they are easy to find later.
+Teaching Lunches are lunchtime conversations about teaching for the Mathematics & Statistics faculty at Louisiana Tech. We meet in the [AXIOM Lab]({{ '/axiom-lab/' | relative_url }}) (Bogard 319). Below are summaries of the topics along with any resources shared.
 
 ## Assessments: more than exams and homework
 
