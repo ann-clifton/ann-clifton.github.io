@@ -2,9 +2,8 @@
 layout: page
 permalink: /resources/students/
 title: resources for students
-nav_title: students
 description: Summer programs, research experiences, and where to look for them.
-nav: true
+nav: false
 nav_order: 6
 ---
 

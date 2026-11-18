@@ -1,13 +1,12 @@
 ---
 layout: page
-title: submenus
-nav: false
-nav_order: 7
+title: resources
+nav: true
+nav_order: 6
 dropdown: true
 children: 
-    - title: publications
-      permalink: /publications/
-    - title: divider
-    - title: projects
-      permalink: /projects/
+    - title: for students
+      permalink: /resources/students/
+    - title: teaching lunches
+      permalink: /resources/teaching-lunches/
 ---
