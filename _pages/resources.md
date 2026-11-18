@@ -5,7 +5,7 @@ title: resources for students
 nav_title: students
 description: Summer programs, research experiences, and where to look for them.
 nav: true
-nav_order: 4
+nav_order: 6
 ---
 
 ## Summer and Research Opportunities
